@@ -5,30 +5,65 @@ using UnityEngine;
 
 public class BottleController : MonoBehaviour
 {
-    // массив цветов жидкости (4 слоя)
-    public Color[] bottleColors;
+    public Color[] bottleColors; // массив цветов жидкости (4 слоя)
 
-    // SpriteRenderer, на котором висит материал с шейдером жидкости
-    public SpriteRenderer bottleMaskSR;
+    public SpriteRenderer bottleMaskSR; // SpriteRenderer, на котором висит материал с шейдером жидкости
 
-    // кривая, управляющая масштабом и поворотом жидкости при наклоне бутылки
-    public AnimationCurve ScaleAndRotationMultiplierCurve;
+    public AnimationCurve ScaleAndRotationMultiplierCurve; // кривая, управляющая масштабом и поворотом жидкости при наклоне бутылки
 
-    // кривая, управляющая уровнем заполнения жидкости
-    public AnimationCurve FillAmountCurve;
+    public AnimationCurve FillAmountCurve; // кривая, управляющая уровнем заполнения жидкости
 
-    // кривая, которая меняет скорость поворота бутылки
-    public AnimationCurve RotationSpeedMultiplier;
+    public AnimationCurve RotationSpeedMultiplier; // кривая, которая меняет скорость поворота бутылки
+
+    public float[] fillAmounts; // индекс массива значений fill amount (для разного количества слоёв в бутылке) соответствует количеству цветов в бутылке
+    public float[] rotationValues; // массив углов поворота бутылки, каждый элемент — максимальный угол для конкретной ситуации
+
+    private int rotationIndex = 0; // индекс текущего угла поворота, используется для выбора значения из rotationValues
+
+    [Range(0, 4)] // ограничивает значение в инспекторе диапазоном от 0 до 4
+    public int numberOfColorsInBottle = 4; // текущее количество цветовых слоёв жидкости в бутылке
+
+    public Color topColor; // public вместо private - для удобства дебаггинга
+    public int numberOfTopColorLayers = 1; // public вместо private - для удобства дебаггинга
+
+    public BottleController bottleControllerRef;
+    public bool justThisBottle = false;
+    private int numberOfColorsToTransfer = 0;
 
     void Start()
     {
+        bottleMaskSR.material.SetFloat("_FillAmount", fillAmounts[numberOfColorsInBottle]); // устанавливаем начальный уровень жидкости из массива fillAmounts
+
         UpdateColorsOnShader();
+
+        UpdateTopColorValues();
     }
 
     void Update() // для проверки поворота бутылочки клавишей Р
     {
-        if (Keyboard.current.pKey.wasReleasedThisFrame)
+        if (Keyboard.current.pKey.wasReleasedThisFrame && justThisBottle == true)
         {
+            UpdateTopColorValues();
+
+            // Возьми другую бутылку, найди первый свободный слой и столько раз, сколько можно перелить, запиши туда верхний цвет текущей бутылки
+
+            if (bottleControllerRef.FillBottleCheck(topColor)) // бутылка-реципиент.можно в тебя налить?
+            {
+                numberOfColorsToTransfer = Mathf.Min( // защита от перелива - сколько льём?
+                    numberOfTopColorLayers, // сколько одинаковых слоёв сверху
+                    4 - bottleControllerRef.numberOfColorsInBottle // сколько места в реципиенте
+                    );
+
+                for (int i = 0; i < numberOfColorsToTransfer; i++) // знаем, сколько льём, и льём
+                {
+                    bottleControllerRef.bottleColors[ // реципиент.его массив цветов
+                        bottleControllerRef.numberOfColorsInBottle + i //сколько слоёв есть в бутылке - льём в пустой
+                        ] = topColor; // льём мы, собственно, верхний цвет
+                }
+                bottleControllerRef.UpdateColorsOnShader(); // обновили шейдер реципиента
+            }
+
+            CalculateRotationIndex(4 - bottleControllerRef.numberOfColorsInBottle);
             StartCoroutine(RotateBottle());
         }
     }
@@ -50,23 +85,34 @@ public class BottleController : MonoBehaviour
         float lerpValue; // значение интерполяции (0–1)
         float angleValue; // текущий угол поворота бутылки
 
+        float lastAngleValue = 0;
+
         while (t < timeToRotate) // пока не прошло заданное время поворота
         {
             lerpValue = t / timeToRotate; // нормализуем время в диапазон 0–1
-            angleValue = Mathf.Lerp(0.0f, 90.0f, lerpValue); // плавно интерполируем угол от 0 до 90 градусов
+            angleValue = Mathf.Lerp(0.0f, rotationValues[rotationIndex], lerpValue); // плавно интерполируем угол от 0 до 90 градусов
 
             transform.eulerAngles = new Vector3(0, 0, angleValue); // применяем поворот к объекту бутылки
             bottleMaskSR.material.SetFloat("_SARM", ScaleAndRotationMultiplierCurve.Evaluate(angleValue)); // передаём в шейдер множитель масштаба/поворота жидкости
-            bottleMaskSR.material.SetFloat("_FillAmount", FillAmountCurve.Evaluate(angleValue)); // передаём в шейдер уровень заполнения жидкости
+
+            if (fillAmounts[numberOfColorsInBottle] > FillAmountCurve.Evaluate(angleValue)) // проверяем, не превышает ли рассчитанный уровень максимально допустимый
+            {
+                bottleMaskSR.material.SetFloat("_FillAmount", FillAmountCurve.Evaluate(angleValue)); // обновляем fill amount в шейдере, если он ещё не достиг лимита
+
+                bottleControllerRef.FillUp(FillAmountCurve.Evaluate(lastAngleValue) - FillAmountCurve.Evaluate(angleValue)); // красиво вливаем в реципиента
+            }
 
             t += Time.deltaTime * RotationSpeedMultiplier.Evaluate(angleValue); // увеличиваем время с учётом кривой скорости вращения
-
+            lastAngleValue = angleValue;
             yield return new WaitForEndOfFrame(); // ждём следующий кадр
         }
-        angleValue = 90.0f; // гарантированно выставляем конечное положение (90 градусов)
+        angleValue = rotationValues[rotationIndex]; // принудительно устанавливаем финальный угол поворота, чтобы избежать накопления ошибки интерполяции
         transform.eulerAngles = new Vector3(0, 0, angleValue);
         bottleMaskSR.material.SetFloat("_SARM", ScaleAndRotationMultiplierCurve.Evaluate(angleValue));
         bottleMaskSR.material.SetFloat("_FillAmount", FillAmountCurve.Evaluate(angleValue));
+
+        numberOfColorsInBottle -= numberOfColorsToTransfer; // уменьшаем количество слоёв в бутылке на число слоёв верхнего цвета, которые были перелиты
+        bottleControllerRef.numberOfColorsInBottle += numberOfColorsToTransfer;
 
         StartCoroutine(RotateBottleBack()); // после поворота вперёд запускаем обратный поворот
 
@@ -81,7 +127,7 @@ public class BottleController : MonoBehaviour
         while (t < timeToRotate)
         {
             lerpValue = t / timeToRotate;
-            angleValue = Mathf.Lerp(90.0f, 0.0f, lerpValue);
+            angleValue = Mathf.Lerp(rotationValues[rotationIndex], 0.0f, lerpValue); // плавно возвращаем бутылку в исходное положение
 
             transform.eulerAngles = new Vector3(0, 0, angleValue);
             bottleMaskSR.material.SetFloat("_SARM", ScaleAndRotationMultiplierCurve.Evaluate(angleValue));
@@ -91,11 +137,103 @@ public class BottleController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        // гарантированно возвращаем бутылку в исходное положение
-        angleValue = 0;
+        UpdateTopColorValues(); // пересчитываем верхний цвет и количество одинаковых верхних слоёв после завершения переливания
+
+        angleValue = 0; // гарантированно возвращаем бутылку в исходное положение
         transform.eulerAngles = new Vector3(0, 0, angleValue);
         bottleMaskSR.material.SetFloat("_SARM", ScaleAndRotationMultiplierCurve.Evaluate(angleValue));
 
-
     }
+
+    void UpdateTopColorValues() // считает одинаковые слои с верху бутылки
+    {
+        if (numberOfColorsInBottle != 0)
+        {
+            numberOfTopColorLayers = 1;
+
+            topColor = bottleColors[numberOfColorsInBottle - 1];
+
+            if (numberOfColorsInBottle == 4)
+            {
+                if (bottleColors[3].Equals(bottleColors[2]))
+                {
+                    numberOfTopColorLayers = 2;
+                    if (bottleColors[2].Equals(bottleColors[1]))
+                    {
+                        numberOfTopColorLayers = 3;
+                        if (bottleColors[1].Equals(bottleColors[0]))
+                        {
+                            numberOfTopColorLayers = 4;
+                        }
+                    }
+                }
+            }
+
+            else if (numberOfColorsInBottle == 3)
+            {
+                if (bottleColors[2].Equals(bottleColors[1]))
+                {
+                    numberOfTopColorLayers = 2;
+                    if (bottleColors[1].Equals(bottleColors[0]))
+                    {
+                        numberOfTopColorLayers = 3;
+                    }
+                }
+            }
+
+            else if (numberOfColorsInBottle == 2)
+            {
+                if (bottleColors[1].Equals(bottleColors[0]))
+                {
+                    numberOfTopColorLayers = 2;
+                }
+            }
+
+            rotationIndex = 3 - (numberOfColorsInBottle - numberOfTopColorLayers); // вычисляем индекс угла поворота от того, сколько слоёв осталось и сколько одинаковых сверху
+        }
+    }
+
+    private bool FillBottleCheck(Color colorToCheck) // можно налить?
+    {
+        if (numberOfColorsInBottle == 0)
+        {
+            return true; // на здоровье
+        }
+        else
+        {
+            if (numberOfColorsInBottle == 4)
+            {
+                return false; // некуда лить
+            }
+            else
+            {
+                if (topColor.Equals(colorToCheck))
+                {
+                    return true; // верхний цвет совпадает с цветом перелива - можно
+                }
+                else
+                {
+                    return false; // не совпадает - нельзя
+                }
+            }
+        }
+    }
+
+    private void CalculateRotationIndex(int numberOfEmptySpacesInSecondBottle)
+    {
+        rotationIndex = 3 - ( // 3 - это максимальный индекс массива поворота
+            numberOfColorsInBottle - // сколько слоёв там, откуда льём
+            Mathf.Min(numberOfEmptySpacesInSecondBottle, numberOfTopColorLayers) // минимум из пустых мест реципиента и одинаковых верхних слоёв донора
+            ); // пусть в доноре 4 цвета, из них 2 верхних одинаковы. В реципиенте 1 место. Итого 3 - (4 - 1) = 0, это первый индекс - переливаем только 1 слой
+    }
+
+    private void FillUp(float fillAmountToAdd)
+    {
+        bottleMaskSR.material.SetFloat(
+            "_FillAmount",
+            bottleMaskSR.material.GetFloat("_FillAmount") // берём текущий уровень воды из материала шейдера
+            + fillAmountToAdd // прибавляем к текущему значению, сколько надо долить
+            ); // и устанавливаем обратно в уже долитом виде
+    }
+
 }
