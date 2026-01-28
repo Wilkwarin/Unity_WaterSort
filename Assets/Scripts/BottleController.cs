@@ -44,6 +44,20 @@ public class BottleController : MonoBehaviour
 
     public LineRenderer lineRenderer;
 
+    [Header("Cork Settings")]
+    public GameObject corkPrefab;
+    private GameObject corkInstance;
+    private ParticleSystem corkParticles;
+    public Transform corkAnchor;
+
+    void Awake()
+    {
+        if (gameController == null)
+        {
+            gameController = FindFirstObjectByType<GameController>();
+        }
+    }
+
     void Start()
     {
         bottleMaskSR.material.SetFloat("_FillAmount", fillAmounts[numberOfColorsInBottle]); // устанавливаем начальный уровень жидкости из массива fillAmounts
@@ -53,6 +67,22 @@ public class BottleController : MonoBehaviour
         UpdateColorsOnShader();
 
         UpdateTopColorValues();
+
+        if (corkPrefab != null)
+        {
+            corkInstance = Instantiate(
+                corkPrefab,
+                corkAnchor
+            );
+
+            corkInstance.transform.localPosition = Vector3.zero;
+            corkInstance.transform.localRotation = Quaternion.identity;
+
+            corkParticles = corkInstance.GetComponent<ParticleSystem>();
+            corkInstance.SetActive(false);
+        }
+
+        UpdateCorkVisibility();
     }
 
     void Update() // для проверки поворота бутылочки клавишей Р
@@ -259,6 +289,7 @@ public class BottleController : MonoBehaviour
         }
 
         UpdateTopColorValues(); // пересчитываем верхний цвет и количество одинаковых верхних слоёв после завершения переливания
+        bottleControllerRef.UpdateTopColorValues();
 
         angleValue = 0; // гарантированно возвращаем бутылку в исходное положение
         transform.eulerAngles = new Vector3(0, 0, angleValue);
@@ -313,6 +344,8 @@ public class BottleController : MonoBehaviour
             }
 
             rotationIndex = 3 - (numberOfColorsInBottle - numberOfTopColorLayers); // вычисляем индекс угла поворота от того, сколько слоёв осталось и сколько одинаковых сверху
+
+            UpdateCorkVisibility();
         }
     }
 
@@ -392,6 +425,26 @@ public class BottleController : MonoBehaviour
         }
 
         return false; // Во всех остальных случаях бутылка не завершена
+    }
+
+    public void UpdateCorkVisibility()
+    {
+        if (corkInstance == null)
+        {
+            return;
+        }
+
+        bool shouldShowCork = numberOfColorsInBottle == 4 && IsBottleComplete();
+
+        if (shouldShowCork && !corkInstance.activeSelf)
+        {
+            corkInstance.SetActive(true);
+
+            if (corkParticles != null)
+            {
+                corkParticles.Play();
+            }
+        }
     }
 
 }
