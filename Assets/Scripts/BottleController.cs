@@ -30,6 +30,8 @@ public class BottleController : MonoBehaviour
     public bool justThisBottle = false;
     private int numberOfColorsToTransfer = 0;
 
+    public GameController gameController;
+
     public Transform leftRotationPoint;
     public Transform rightRotationPoint;
     private Transform chosenRotationPoint;
@@ -156,6 +158,11 @@ public class BottleController : MonoBehaviour
         transform.GetComponent<SpriteRenderer>().sortingOrder -= 2;
         bottleMaskSR.sortingOrder -= 2;
 
+        if (gameController != null)
+        {
+            gameController.CheckWinCondition();
+        }
+
     }
 
     void UpdateColorsOnShader()
@@ -168,6 +175,7 @@ public class BottleController : MonoBehaviour
 
     // общее время поворота бутылки в одну сторону
     public float timeToRotate = 1.0f;
+    public float timeToRotateBack = 0.4f;
 
     IEnumerator RotateBottle()
     {
@@ -232,9 +240,9 @@ public class BottleController : MonoBehaviour
 
         float lastAngleValue = directionMultiplier * rotationValues[rotationIndex];
 
-        while (t < timeToRotate)
+        while (t < timeToRotateBack)
         {
-            lerpValue = t / timeToRotate;
+            lerpValue = t / timeToRotateBack;
             angleValue = Mathf.Lerp(directionMultiplier * rotationValues[rotationIndex], 0.0f, lerpValue); // плавно возвращаем бутылку в исходное положение
 
             // transform.eulerAngles = new Vector3(0, 0, angleValue);
@@ -363,6 +371,27 @@ public class BottleController : MonoBehaviour
             chosenRotationPoint = rightRotationPoint;
             directionMultiplier = 1.0f;
         }
+    }
+
+    public bool IsBottleComplete()
+    {
+
+        if (numberOfColorsInBottle == 0) // Пустая бутылка считается завершённой
+        {
+            return true;
+        }
+
+        if (numberOfColorsInBottle == 4)
+        {
+            if (bottleColors[0].Equals(bottleColors[1]) &&
+                bottleColors[1].Equals(bottleColors[2]) &&
+                bottleColors[2].Equals(bottleColors[3]))
+            {
+                return true;
+            }
+        }
+
+        return false; // Во всех остальных случаях бутылка не завершена
     }
 
 }

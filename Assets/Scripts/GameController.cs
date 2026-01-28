@@ -6,10 +6,23 @@ public class GameController : MonoBehaviour
     public BottleController FirstBottle;
     public BottleController SecondBottle;
 
+    [Header("Level Setup")]
+    public BottleController[] allBottles; // Массив всех бутылок на уровне
+
+    [Header("UI References")]
+    public GameObject winPanel;
+
+    private bool levelCompleted = false;
+
     void Start() { }
 
     void Update()
     {
+        if (levelCompleted)
+        {
+            return;
+        }
+
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
@@ -56,4 +69,40 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
+    public void CheckWinCondition()
+    {
+        if (levelCompleted)
+        {
+            return;
+        }
+
+        foreach (BottleController bottle in allBottles)
+        {
+            if (bottle == null)
+            {
+                Debug.LogWarning("Пустая ссылка в массиве allBottles");
+                continue;
+            }
+
+            if (!bottle.IsBottleComplete()) // Если хотя бы одна бутылка не завершена - победы нет
+            {
+                return;
+            }
+        }
+
+        OnLevelComplete();
+    }
+
+    void OnLevelComplete()
+    {
+        levelCompleted = true;
+        Debug.Log("Уровень завершён!");
+
+        if (winPanel != null)
+        {
+            winPanel.SetActive(true);
+        }
+    }
+
 }
