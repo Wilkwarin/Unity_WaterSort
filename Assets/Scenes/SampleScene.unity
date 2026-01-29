@@ -128,6 +128,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: gameController
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: selectionLiftHeight
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
       propertyPath: numberOfColorsInBottle
       value: 2
       objectReference: {fileID: 0}
@@ -795,6 +803,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 674615994}
   m_CullTransparentMesh: 1
+--- !u!114 &1190761081 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+  m_PrefabInstance: {fileID: 2083546309}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f53d81ee0682d14081b088f4d6405e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BottleController
 --- !u!114 &1263796523 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
@@ -841,6 +860,8 @@ MonoBehaviour:
   - {fileID: 1798482491}
   - {fileID: 1263796523}
   - {fileID: 1454777304}
+  - {fileID: 1821308647}
+  - {fileID: 1190761081}
   winPanel: {fileID: 674615994}
 --- !u!4 &1290873589
 Transform:
@@ -869,6 +890,10 @@ PrefabInstance:
       propertyPath: gameController
       value: 
       objectReference: {fileID: 1290873588}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: selectionLiftHeight
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
       propertyPath: numberOfColorsInBottle
       value: 3
@@ -982,6 +1007,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1290873588}
     - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: selectionLiftHeight
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
       propertyPath: numberOfColorsInBottle
       value: 1
       objectReference: {fileID: 0}
@@ -1046,6 +1075,14 @@ PrefabInstance:
       propertyPath: gameController
       value: 
       objectReference: {fileID: 1290873588}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: justThisBottle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: selectionLiftHeight
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 6323815442663137327, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.24
@@ -1106,6 +1143,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f53d81ee0682d14081b088f4d6405e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BottleController
+--- !u!114 &1821308647 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+  m_PrefabInstance: {fileID: 23733304}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f53d81ee0682d14081b088f4d6405e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BottleController
 --- !u!1001 &2083546309
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1114,6 +1162,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: gameController
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
+      propertyPath: selectionLiftHeight
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
       propertyPath: numberOfColorsInBottle
       value: 2

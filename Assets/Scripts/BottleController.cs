@@ -5,50 +5,60 @@ using UnityEngine;
 
 public class BottleController : MonoBehaviour
 {
-    public Color[] bottleColors; // массив цветов жидкости (4 слоя)
+    [Header("Visual Components")]
+    public SpriteRenderer bottleMaskSR;
+    public LineRenderer lineRenderer;
 
-    public SpriteRenderer bottleMaskSR; // SpriteRenderer, на котором висит материал с шейдером жидкости
+    [Header("Bottle Colors")]
+    public Color[] bottleColors;
+    public Color topColor;
+    public int numberOfTopColorLayers = 1;
 
-    public AnimationCurve ScaleAndRotationMultiplierCurve; // кривая, управляющая масштабом и поворотом жидкости при наклоне бутылки
+    [Header("Animation Curves")]
+    public AnimationCurve ScaleAndRotationMultiplierCurve;
+    public AnimationCurve FillAmountCurve;
+    public AnimationCurve RotationSpeedMultiplier;
 
-    public AnimationCurve FillAmountCurve; // кривая, управляющая уровнем заполнения жидкости
-
-    public AnimationCurve RotationSpeedMultiplier; // кривая, которая меняет скорость поворота бутылки
-
-    public float[] fillAmounts; // индекс массива значений fill amount (для разного количества слоёв в бутылке) соответствует количеству цветов в бутылке
-    public float[] rotationValues; // массив углов поворота бутылки, каждый элемент — максимальный угол для конкретной ситуации
-
-    private int rotationIndex = 0; // индекс текущего угла поворота, используется для выбора значения из rotationValues
-
-    [Range(0, 4)] // ограничивает значение в инспекторе диапазоном от 0 до 4
-    public int numberOfColorsInBottle = 4; // текущее количество цветовых слоёв жидкости в бутылке
-
-    public Color topColor; // public вместо private - для удобства дебаггинга
-    public int numberOfTopColorLayers = 1; // public вместо private - для удобства дебаггинга
-
-    public BottleController bottleControllerRef;
-    public bool justThisBottle = false;
+    [Header("Fill & Rotation Settings")]
+    public float[] fillAmounts;
+    public float[] rotationValues;
+    [Range(0, 4)]
+    public int numberOfColorsInBottle = 4;
+    private int rotationIndex = 0;
     private int numberOfColorsToTransfer = 0;
 
-    public GameController gameController;
+    [Header("Animation Timing")]
+    public float timeToRotate = 1.0f;
+    public float timeToRotateBack = 0.4f;
 
+    [Header("Rotation Points")]
     public Transform leftRotationPoint;
     public Transform rightRotationPoint;
     private Transform chosenRotationPoint;
 
-    private float directionMultiplier = 1.0f;
-
-    Vector3 originalPosition;
-    Vector3 startPosition;
-    Vector3 endPosition;
-
-    public LineRenderer lineRenderer;
-
     [Header("Cork Settings")]
     public GameObject corkPrefab;
+    public Transform corkAnchor;
     private GameObject corkInstance;
     private ParticleSystem corkParticles;
-    public Transform corkAnchor;
+
+    [Header("References")]
+    public GameController gameController;
+    public BottleController bottleControllerRef;
+
+    [Header("Debug")]
+    public bool justThisBottle = false;
+
+    [Header("Selection Effects")]
+    public float selectionLiftHeight = 0.2f; // Высота подъёма
+
+    private bool isSelected = false;
+    private Vector3 normalPosition;
+
+    private float directionMultiplier = 1.0f;
+    private Vector3 originalPosition;
+    private Vector3 startPosition;
+    private Vector3 endPosition;
 
     void Awake()
     {
@@ -83,6 +93,25 @@ public class BottleController : MonoBehaviour
         }
 
         UpdateCorkVisibility();
+    }
+
+    public void Select()
+    {
+        if (isSelected) return;
+
+        isSelected = true;
+        normalPosition = transform.position;
+
+        transform.position = normalPosition + Vector3.up * selectionLiftHeight;
+    }
+
+    public void Deselect()
+    {
+        if (!isSelected) return;
+
+        isSelected = false;
+
+        transform.position = originalPosition;
     }
 
     void Update() // для проверки поворота бутылочки клавишей Р
@@ -188,6 +217,8 @@ public class BottleController : MonoBehaviour
         transform.GetComponent<SpriteRenderer>().sortingOrder -= 2;
         bottleMaskSR.sortingOrder -= 2;
 
+        Deselect();
+
         if (gameController != null)
         {
             gameController.CheckWinCondition();
@@ -202,10 +233,6 @@ public class BottleController : MonoBehaviour
         bottleMaskSR.material.SetColor("_C3", bottleColors[2]);
         bottleMaskSR.material.SetColor("_C4", bottleColors[3]);
     }
-
-    // общее время поворота бутылки в одну сторону
-    public float timeToRotate = 1.0f;
-    public float timeToRotateBack = 0.4f;
 
     IEnumerator RotateBottle()
     {

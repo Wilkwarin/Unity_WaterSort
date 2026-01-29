@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class GameController : MonoBehaviour
 {
+    [Header("Selected Bottles")]
     public BottleController FirstBottle;
     public BottleController SecondBottle;
 
@@ -36,12 +37,21 @@ public class GameController : MonoBehaviour
                 {
                     if (FirstBottle == null)
                     {
-                        FirstBottle = hit.collider.GetComponent<BottleController>();
+                        BottleController selectedBottle = hit.collider.GetComponent<BottleController>();
+
+                        if ((selectedBottle.IsBottleComplete() && selectedBottle.numberOfColorsInBottle == 4) || selectedBottle.numberOfColorsInBottle == 0)
+                        {
+                            return;
+                        }
+
+                        FirstBottle = selectedBottle;
+                        FirstBottle.Select();
                     }
                     else
                     {
                         if (FirstBottle == hit.collider.GetComponent<BottleController>())
                         {
+                            FirstBottle.Deselect();
                             FirstBottle = null;
                         }
                         else
@@ -60,6 +70,7 @@ public class GameController : MonoBehaviour
                             }
                             else
                             {
+                                FirstBottle.Deselect();
                                 FirstBottle = null;
                                 SecondBottle = null;
                             }
