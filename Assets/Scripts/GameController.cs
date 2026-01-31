@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -14,12 +15,13 @@ public class GameController : MonoBehaviour
     public GameObject winPanel;
 
     private bool levelCompleted = false;
+    public bool isBusy = false;
 
     void Start() { }
 
     void Update()
     {
-        if (levelCompleted)
+        if (levelCompleted || isBusy)
         {
             return;
         }
@@ -39,7 +41,7 @@ public class GameController : MonoBehaviour
                     {
                         BottleController selectedBottle = hit.collider.GetComponent<BottleController>();
 
-                        if ((selectedBottle.IsBottleComplete() && selectedBottle.numberOfColorsInBottle == 4) || selectedBottle.numberOfColorsInBottle == 0)
+                        if (selectedBottle.currentState != BottleState.InProgress)
                         {
                             return;
                         }
@@ -96,7 +98,7 @@ public class GameController : MonoBehaviour
                 continue;
             }
 
-            if (!bottle.IsBottleComplete()) // Если хотя бы одна бутылка не завершена - победы нет
+            if (bottle.currentState == BottleState.InProgress)
             {
                 return;
             }
@@ -113,6 +115,29 @@ public class GameController : MonoBehaviour
         if (winPanel != null)
         {
             winPanel.SetActive(true);
+        }
+    }
+
+    public void RestartLevel()
+    {
+        if (winPanel != null)
+        {
+            winPanel.SetActive(false);
+        }
+
+        levelCompleted = false;
+        isBusy = false;
+        FirstBottle = null;
+        SecondBottle = null;
+
+        LevelManager levelManager = FindFirstObjectByType<LevelManager>();
+        if (levelManager != null)
+        {
+            levelManager.RestartCurrentLevel();
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 

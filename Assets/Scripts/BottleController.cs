@@ -60,6 +60,9 @@ public class BottleController : MonoBehaviour
     private Vector3 startPosition;
     private Vector3 endPosition;
 
+    [Header("State")]
+    public BottleState currentState;
+
     void Awake()
     {
         if (gameController == null)
@@ -92,7 +95,28 @@ public class BottleController : MonoBehaviour
             corkInstance.SetActive(false);
         }
 
+        UpdateBottleState();
         UpdateCorkVisibility();
+    }
+
+    public void UpdateBottleState()
+    {
+        if (numberOfColorsInBottle == 0)
+        {
+            currentState = BottleState.Empty;
+            return;
+        }
+
+        if (numberOfColorsInBottle == 4 &&
+            bottleColors[0].Equals(bottleColors[1]) &&
+            bottleColors[1].Equals(bottleColors[2]) &&
+            bottleColors[2].Equals(bottleColors[3]))
+        {
+            currentState = BottleState.Complete;
+            return;
+        }
+
+        currentState = BottleState.InProgress;
     }
 
     public void Select()
@@ -147,6 +171,8 @@ public class BottleController : MonoBehaviour
 
     public void StartColorTransfer()
     {
+        gameController.isBusy = true;
+
         ChoseRotationPointAndDirection();
 
         numberOfColorsToTransfer = Mathf.Min( // защита от перелива - сколько льём?
@@ -221,12 +247,13 @@ public class BottleController : MonoBehaviour
 
         if (gameController != null)
         {
+            gameController.isBusy = false;
             gameController.CheckWinCondition();
         }
 
     }
 
-    void UpdateColorsOnShader()
+    public void UpdateColorsOnShader()
     {
         bottleMaskSR.material.SetColor("_C1", bottleColors[0]);
         bottleMaskSR.material.SetColor("_C2", bottleColors[1]);
@@ -283,6 +310,12 @@ public class BottleController : MonoBehaviour
         numberOfColorsInBottle -= numberOfColorsToTransfer; // уменьшаем количество слоёв в бутылке на число слоёв верхнего цвета, которые были перелиты
         bottleControllerRef.numberOfColorsInBottle += numberOfColorsToTransfer;
 
+        UpdateBottleState();
+        bottleControllerRef.UpdateBottleState();
+
+        UpdateCorkVisibility();
+        bottleControllerRef.UpdateCorkVisibility();
+
         lineRenderer.enabled = false;
 
         StartCoroutine(RotateBottleBack()); // после поворота вперёд запускаем обратный поворот
@@ -317,6 +350,9 @@ public class BottleController : MonoBehaviour
 
         UpdateTopColorValues(); // пересчитываем верхний цвет и количество одинаковых верхних слоёв после завершения переливания
         bottleControllerRef.UpdateTopColorValues();
+
+        UpdateBottleState();
+        bottleControllerRef.UpdateBottleState();
 
         angleValue = 0; // гарантированно возвращаем бутылку в исходное положение
         transform.eulerAngles = new Vector3(0, 0, angleValue);
@@ -435,42 +471,22 @@ public class BottleController : MonoBehaviour
 
     public bool IsBottleComplete()
     {
-
-        if (numberOfColorsInBottle == 0) // Пустая бутылка считается завершённой
-        {
-            return true;
-        }
-
-        if (numberOfColorsInBottle == 4)
-        {
-            if (bottleColors[0].Equals(bottleColors[1]) &&
-                bottleColors[1].Equals(bottleColors[2]) &&
-                bottleColors[2].Equals(bottleColors[3]))
-            {
-                return true;
-            }
-        }
-
-        return false; // Во всех остальных случаях бутылка не завершена
+        return currentState == BottleState.Complete || currentState == BottleState.Empty;
     }
 
     public void UpdateCorkVisibility()
     {
         if (corkInstance == null)
-        {
             return;
-        }
 
-        bool shouldShowCork = numberOfColorsInBottle == 4 && IsBottleComplete();
+        bool shouldShowCork = currentState == BottleState.Complete;
 
         if (shouldShowCork && !corkInstance.activeSelf)
         {
             corkInstance.SetActive(true);
 
             if (corkParticles != null)
-            {
                 corkParticles.Play();
-            }
         }
     }
 
