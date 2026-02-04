@@ -141,4 +141,21 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void OnNextLevelButtonPressed()
+    {
+        if (winPanel != null)
+        {
+            winPanel.SetActive(false);
+        }
+
+        levelCompleted = false;
+        isBusy = false;
+
+        LevelManager levelManager = FindFirstObjectByType<LevelManager>();
+        if (levelManager != null)
+        {
+            levelManager.NextLevel();
+        }
+    }
+
 }

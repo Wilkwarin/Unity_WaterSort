@@ -16,24 +16,10 @@ MonoBehaviour:
   levelName: Level 1
   bottles:
   - colors:
-    - {r: 1, g: 0, b: 1, a: 1}
-    - {r: 1, g: 0, b: 1, a: 1}
-    - {r: 0, g: 1, b: 0, a: 1}
-    - {r: 0, g: 1, b: 0, a: 1}
-    numberOfColors: 4
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    numberOfColors: 3
   - colors:
-    - {r: 0, g: 1, b: 0, a: 1}
-    - {r: 0, g: 1, b: 0, a: 1}
-    - {r: 1, g: 0, b: 1, a: 1}
-    - {r: 1, g: 0, b: 1, a: 1}
-    numberOfColors: 4
-  - colors:
-    - {r: 1, g: 0, b: 1, a: 1}
-    - {r: 0, g: 1, b: 0, a: 1}
-    - {r: 1, g: 0, b: 1, a: 1}
-    - {r: 0, g: 1, b: 0, a: 1}
-    numberOfColors: 4
-  - colors: []
-    numberOfColors: 0
-  - colors: []
-    numberOfColors: 0
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    numberOfColors: 1

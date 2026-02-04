@@ -9,8 +9,8 @@ public class LevelManager : MonoBehaviour
     [Header("Bottle Spawning")]
     public BottleController bottlePrefab;
     public Transform bottlesParent;
-    public Vector3 firstBottlePosition = new Vector3(-3, 0, 0);
-    public float bottleSpacing = 1.5f;
+    public float bottleSpacing = 1.0f;
+    public float rowSpacing = 1.5f;
 
     [Header("References")]
     public GameController gameController;
@@ -24,7 +24,6 @@ public class LevelManager : MonoBehaviour
 
     public void LoadLevel(int levelIndex)
     {
-        // Проверка корректности индекса
         if (levelIndex < 0 || levelIndex >= levels.Length)
         {
             Debug.LogError($"Уровень {levelIndex} не существует!");
@@ -47,40 +46,78 @@ public class LevelManager : MonoBehaviour
         Debug.Log($"Создаём {bottleCount} бутылок");
         spawnedBottles = new BottleController[bottleCount];
 
-        for (int i = 0; i < bottleCount; i++)
+        if (bottleCount <= 6)
         {
-            // Вычисляем позицию бутылки
-            Vector3 position = firstBottlePosition + Vector3.right * (i * bottleSpacing);
-
-            // Создаём бутылку
-            BottleController bottle = Instantiate(bottlePrefab, position, Quaternion.identity);
-
-            // Помещаем в родителя (для чистоты Hierarchy)
-            if (bottlesParent != null)
-            {
-                bottle.transform.SetParent(bottlesParent);
-            }
-
-            // Переименовываем
-            bottle.name = $"Bottle_{i}";
-
-            // Применяем конфигурацию
-            ApplyConfiguration(bottle, level.bottles[i]);
-
-            // Сохраняем ссылку
-            spawnedBottles[i] = bottle;
+            SpawnSingleRow(level, bottleCount);
+        }
+        else
+        {
+            SpawnTwoRows(level, bottleCount);
         }
 
-        // Передаём массив бутылок в GameController
         if (gameController != null)
         {
             gameController.allBottles = spawnedBottles;
         }
     }
 
+    void SpawnSingleRow(LevelData level, int bottleCount)
+    {
+        float totalWidth = (bottleCount - 1) * bottleSpacing;
+        
+        float startX = -totalWidth / 2f;
+        float y = 0f;
+
+        for (int i = 0; i < bottleCount; i++)
+        {
+            Vector3 position = new Vector3(startX + i * bottleSpacing, y, 0);
+            CreateBottle(i, position, level.bottles[i]);
+        }
+    }
+
+    void SpawnTwoRows(LevelData level, int bottleCount)
+    {
+        int topRowCount = (bottleCount + 1) / 2; // Если нечётное, сверху на 1 больше
+        int bottomRowCount = bottleCount / 2;
+
+        float topY = rowSpacing / 2f;
+        float topWidth = (topRowCount - 1) * bottleSpacing;
+        float topStartX = -topWidth / 2f;
+
+        for (int i = 0; i < topRowCount; i++)
+        {
+            Vector3 position = new Vector3(topStartX + i * bottleSpacing, topY, 0);
+            CreateBottle(i, position, level.bottles[i]);
+        }
+
+        float bottomY = -rowSpacing / 2f;
+        float bottomWidth = (bottomRowCount - 1) * bottleSpacing;
+        float bottomStartX = -bottomWidth / 2f;
+
+        for (int i = 0; i < bottomRowCount; i++)
+        {
+            int bottleIndex = topRowCount + i;
+            Vector3 position = new Vector3(bottomStartX + i * bottleSpacing, bottomY, 0);
+            CreateBottle(bottleIndex, position, level.bottles[bottleIndex]);
+        }
+    }
+
+    void CreateBottle(int index, Vector3 position, LevelData.BottleConfiguration config)
+    {
+        BottleController bottle = Instantiate(bottlePrefab, position, Quaternion.identity);
+
+        if (bottlesParent != null)
+        {
+            bottle.transform.SetParent(bottlesParent);
+        }
+
+        bottle.name = $"Bottle_{index}";
+        ApplyConfiguration(bottle, config);
+        spawnedBottles[index] = bottle;
+    }
+
     void ApplyConfiguration(BottleController bottle, LevelData.BottleConfiguration config)
     {
-        // Инициализируем массив цветов
         if (bottle.bottleColors == null || bottle.bottleColors.Length != 4)
         {
             bottle.bottleColors = new Color[4];
@@ -88,14 +125,11 @@ public class LevelManager : MonoBehaviour
 
         bottle.numberOfColorsInBottle = config.numberOfColors;
 
-        Debug.Log($"Бутылка {bottle.name}: config.colors = {config.colors}, Length = {config.colors?.Length}");
-
         for (int i = 0; i < 4; i++)
         {
-            if (i < config.numberOfColors)
+            if (i < config.numberOfColors && config.colors != null && i < config.colors.Length)
             {
                 bottle.bottleColors[i] = config.colors[i];
-                Debug.Log($"  i={i}, пытаюсь взять config.colors[{i}]");
             }
             else
             {
@@ -103,13 +137,11 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // Обновляем визуал
         bottle.UpdateColorsOnShader();
         bottle.UpdateTopColorValues();
         bottle.UpdateBottleState();
         bottle.UpdateCorkVisibility();
 
-        // ИСПРАВЛЕНО: Проверяем наличие fillAmounts перед использованием
         if (bottle.fillAmounts != null && bottle.fillAmounts.Length > bottle.numberOfColorsInBottle)
         {
             bottle.bottleMaskSR.material.SetFloat("_FillAmount", bottle.fillAmounts[bottle.numberOfColorsInBottle]);
