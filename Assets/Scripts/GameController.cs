@@ -9,10 +9,11 @@ public class GameController : MonoBehaviour
     public BottleController SecondBottle;
 
     [Header("Level Setup")]
-    public BottleController[] allBottles; // Массив всех бутылок на уровне
+    public BottleController[] allBottles;
 
     [Header("UI References")]
     public GameObject winPanel;
+    public MenuManager menuManager;
 
     private bool levelCompleted = false;
     public bool isBusy = false;
@@ -110,12 +111,14 @@ public class GameController : MonoBehaviour
     void OnLevelComplete()
     {
         levelCompleted = true;
-        Debug.Log("Уровень завершён!");
 
-        if (winPanel != null)
+        LevelManager levelManager = FindFirstObjectByType<LevelManager>();
+        if (levelManager != null)
         {
-            winPanel.SetActive(true);
+            ProgressManager.Instance.SaveCurrentLevel(levelManager.currentLevelIndex + 1);
         }
+
+        winPanel?.SetActive(true);
     }
 
     public void RestartLevel()
@@ -157,5 +160,27 @@ public class GameController : MonoBehaviour
             levelManager.NextLevel();
         }
     }
+
+    public void OnMenuButtonPressed()
+    {
+        if (winPanel != null)
+        {
+            winPanel.SetActive(false);
+        }
+
+        levelCompleted = false;
+        isBusy = false;
+        FirstBottle = null;
+        SecondBottle = null;
+
+        LevelManager lm = FindFirstObjectByType<LevelManager>();
+        if (lm != null)
+        {
+            lm.ClearBottles();
+        }
+
+        menuManager.ShowMenu();
+    }
+
 
 }

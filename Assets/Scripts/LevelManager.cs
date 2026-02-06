@@ -17,10 +17,7 @@ public class LevelManager : MonoBehaviour
 
     private BottleController[] spawnedBottles;
 
-    void Start()
-    {
-        LoadLevel(currentLevelIndex);
-    }
+    void Start(){}
 
     public void LoadLevel(int levelIndex)
     {
@@ -64,7 +61,7 @@ public class LevelManager : MonoBehaviour
     void SpawnSingleRow(LevelData level, int bottleCount)
     {
         float totalWidth = (bottleCount - 1) * bottleSpacing;
-        
+
         float startX = -totalWidth / 2f;
         float y = 0f;
 
@@ -152,7 +149,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    void ClearBottles()
+    public void ClearBottles()
     {
         if (spawnedBottles != null)
         {
@@ -164,6 +161,11 @@ public class LevelManager : MonoBehaviour
                 }
             }
             spawnedBottles = null;
+
+            if (gameController != null)
+            {
+                gameController.allBottles = null;
+            }
         }
     }
 
@@ -184,4 +186,5 @@ public class LevelManager : MonoBehaviour
     {
         LoadLevel(currentLevelIndex);
     }
+
 }

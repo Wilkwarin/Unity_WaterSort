@@ -42,3 +42,9 @@ MonoBehaviour:
   - colors:
     - {r: 1, g: 0.8431373, b: 0, a: 1}
     numberOfColors: 0
+  - colors:
+    - {r: 1, g: 0.8431373, b: 0, a: 1}
+    numberOfColors: 0
+  - colors:
+    - {r: 1, g: 0.8431373, b: 0, a: 1}
+    numberOfColors: 0

@@ -8,13 +8,13 @@ public class LevelData : ScriptableObject
     public string levelName = "Level 1";
 
     [Header("Bottle Configuration")]
-    public BottleConfiguration[] bottles; // Массив конфигураций бутылок
+    public BottleConfiguration[] bottles;
     
     [System.Serializable]
     public class BottleConfiguration
     {
-        public Color[] colors = new Color[4]; // 4 слоя цветов
+        public Color[] colors = new Color[4];
         [Range(0, 4)]
-        public int numberOfColors = 4; // Сколько слоёв заполнено
+        public int numberOfColors = 4;
     }
 }

@@ -46,9 +46,6 @@ public class BottleController : MonoBehaviour
     public GameController gameController;
     public BottleController bottleControllerRef;
 
-    [Header("Debug")]
-    public bool justThisBottle = false;
-
     [Header("Selection Effects")]
     public float selectionLiftHeight = 0.2f; // Высота подъёма
 
@@ -138,36 +135,7 @@ public class BottleController : MonoBehaviour
         transform.position = originalPosition;
     }
 
-    void Update() // для проверки поворота бутылочки клавишей Р
-    {
-        if (Keyboard.current.pKey.wasReleasedThisFrame && justThisBottle == true)
-        {
-            UpdateTopColorValues();
-
-            // Возьми другую бутылку, найди первый свободный слой и столько раз, сколько можно перелить, запиши туда верхний цвет текущей бутылки
-
-            if (bottleControllerRef.FillBottleCheck(topColor)) // бутылка-реципиент.можно в тебя налить?
-            {
-                ChoseRotationPointAndDirection();
-
-                numberOfColorsToTransfer = Mathf.Min( // защита от перелива - сколько льём?
-                    numberOfTopColorLayers, // сколько одинаковых слоёв сверху
-                    4 - bottleControllerRef.numberOfColorsInBottle // сколько места в реципиенте
-                    );
-
-                for (int i = 0; i < numberOfColorsToTransfer; i++) // знаем, сколько льём, и льём
-                {
-                    bottleControllerRef.bottleColors[ // реципиент.его массив цветов
-                        bottleControllerRef.numberOfColorsInBottle + i //сколько слоёв есть в бутылке - льём в пустой
-                        ] = topColor; // льём мы, собственно, верхний цвет
-                }
-                bottleControllerRef.UpdateColorsOnShader(); // обновили шейдер реципиента
-            }
-
-            CalculateRotationIndex(4 - bottleControllerRef.numberOfColorsInBottle);
-            StartCoroutine(RotateBottle());
-        }
-    }
+    void Update() { }
 
     public void StartColorTransfer()
     {
@@ -274,8 +242,6 @@ public class BottleController : MonoBehaviour
             lerpValue = t / timeToRotate; // нормализуем время в диапазон 0–1
             angleValue = Mathf.Lerp(0.0f, directionMultiplier * rotationValues[rotationIndex], lerpValue); // плавно интерполируем угол
 
-            // transform.eulerAngles = new Vector3(0, 0, angleValue); // применяем поворот к объекту бутылки
-
             transform.RotateAround(chosenRotationPoint.position, Vector3.forward, lastAngleValue - angleValue);
 
             bottleMaskSR.material.SetFloat("_SARM", ScaleAndRotationMultiplierCurve.Evaluate(angleValue)); // передаём в шейдер множитель масштаба/поворота жидкости
@@ -334,8 +300,6 @@ public class BottleController : MonoBehaviour
         {
             lerpValue = t / timeToRotateBack;
             angleValue = Mathf.Lerp(directionMultiplier * rotationValues[rotationIndex], 0.0f, lerpValue); // плавно возвращаем бутылку в исходное положение
-
-            // transform.eulerAngles = new Vector3(0, 0, angleValue);
 
             transform.RotateAround(chosenRotationPoint.position, Vector3.forward, lastAngleValue - angleValue);
 
@@ -467,11 +431,6 @@ public class BottleController : MonoBehaviour
             chosenRotationPoint = rightRotationPoint;
             directionMultiplier = 1.0f;
         }
-    }
-
-    public bool IsBottleComplete()
-    {
-        return currentState == BottleState.Complete || currentState == BottleState.Empty;
     }
 
     public void UpdateCorkVisibility()
