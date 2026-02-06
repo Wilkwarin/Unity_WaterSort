@@ -39,7 +39,7 @@ public class MenuManager : MonoBehaviour
 
         if (continueButtonText != null)
         {
-            continueButtonText.text = $"УРОВЕНЬ {currentLevel + 1}";
+            continueButtonText.text = $"{currentLevel + 1}";
         }
     }
 

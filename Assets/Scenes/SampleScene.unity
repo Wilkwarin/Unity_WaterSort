@@ -153,9 +153,9 @@ RectTransform:
   - {fileID: 575665948}
   m_Father: {fileID: 965496664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 200}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 80}
   m_SizeDelta: {x: 160, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &58796011
@@ -1071,7 +1071,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: NextLevelButton
+  m_text: 'Next '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1098,8 +1098,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1738,9 +1738,9 @@ RectTransform:
   - {fileID: 413748294}
   m_Father: {fileID: 139824319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 502, y: -50}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -100, y: -50}
   m_SizeDelta: {x: 160, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1367405479
@@ -1869,14 +1869,18 @@ MonoBehaviour:
   levels:
   - {fileID: 11400000, guid: 0457e005240f69d43b3f65c7a9342473, type: 2}
   - {fileID: 11400000, guid: 02286d514b5790548b837bdf24e39700, type: 2}
+  - {fileID: 11400000, guid: 6cc144fe8cd7c0244b9e3340bfe2924d, type: 2}
+  - {fileID: 11400000, guid: 98b3570685a410943b758ab3bb132a9b, type: 2}
   - {fileID: 11400000, guid: c829e55c80db73a46834b8af7f19fcc2, type: 2}
   - {fileID: 11400000, guid: 7d3c4e07f0e01ff4ca42f628936acf27, type: 2}
   currentLevelIndex: 0
+  maxBottleDistance: 0.7
   bottlePrefab: {fileID: 2223628611092508700, guid: da3be167809cc374cb30d8e0d50d5367, type: 3}
   bottlesParent: {fileID: 636340670}
-  bottleSpacing: 1
-  rowSpacing: 1.5
+  horizontalPadding: 1
+  verticalPadding: 1
   gameController: {fileID: 1290873588}
+  mainCamera: {fileID: 0}
 --- !u!4 &1800375406
 Transform:
   m_ObjectHideFlags: 0

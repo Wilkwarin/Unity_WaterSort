@@ -6,18 +6,30 @@ public class LevelManager : MonoBehaviour
     public LevelData[] levels;
     public int currentLevelIndex = 0;
 
+    [Header("Spacing Settings")]
+    public float maxBottleDistance = 0.7f;
+
     [Header("Bottle Spawning")]
     public BottleController bottlePrefab;
     public Transform bottlesParent;
-    public float bottleSpacing = 1.0f;
-    public float rowSpacing = 1.5f;
+
+    [Header("Layout")]
+    public float horizontalPadding = 1f;
+    public float verticalPadding = 1f;
 
     [Header("References")]
     public GameController gameController;
+    public Camera mainCamera;
 
     private BottleController[] spawnedBottles;
 
-    void Start(){}
+    void Start() { }
+
+    void Awake()
+    {
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+    }
 
     public void LoadLevel(int levelIndex)
     {
@@ -29,86 +41,65 @@ public class LevelManager : MonoBehaviour
 
         ClearBottles();
 
-        LevelData level = levels[levelIndex];
         currentLevelIndex = levelIndex;
+        LevelData level = levels[levelIndex];
 
-        Debug.Log($"Загружаем уровень: {level.levelName}");
-
+        AdjustCamera(level);
         SpawnBottles(level);
-    }
-
-    void SpawnBottles(LevelData level)
-    {
-        int bottleCount = level.bottles.Length;
-        Debug.Log($"Создаём {bottleCount} бутылок");
-        spawnedBottles = new BottleController[bottleCount];
-
-        if (bottleCount <= 6)
-        {
-            SpawnSingleRow(level, bottleCount);
-        }
-        else
-        {
-            SpawnTwoRows(level, bottleCount);
-        }
 
         if (gameController != null)
         {
             gameController.allBottles = spawnedBottles;
         }
+
+        Debug.Log($"Загружен уровень {levelIndex + 1}");
     }
 
-    void SpawnSingleRow(LevelData level, int bottleCount)
+    void SpawnBottles(LevelData level)
     {
-        float totalWidth = (bottleCount - 1) * bottleSpacing;
+        int bottleCount = level.bottles.Length;
+        spawnedBottles = new BottleController[bottleCount];
 
-        float startX = -totalWidth / 2f;
-        float y = 0f;
+        float screenHeight = mainCamera.orthographicSize * 2f;
+        float screenWidth = screenHeight * mainCamera.aspect;
 
-        for (int i = 0; i < bottleCount; i++)
+        int rows = bottleCount <= 6 ? 1 : 2;
+        int colsTop = rows == 1 ? bottleCount : (bottleCount + 1) / 2;
+        int colsBottom = bottleCount / 2;
+
+        float maxRowWidth = screenWidth * 0.75f;
+        float commonSpacing = (colsTop <= 1) ? 0 : Mathf.Min(maxRowWidth / (colsTop - 1), maxBottleDistance);
+
+        float rowOffsetY = screenHeight * 0.3f;
+        float startY = (rows == 1) ? 0f : rowOffsetY / 2f;
+
+        int index = 0;
+        SpawnRow(colsTop, startY, commonSpacing, level, ref index);
+
+        if (rows == 2)
         {
-            Vector3 position = new Vector3(startX + i * bottleSpacing, y, 0);
-            CreateBottle(i, position, level.bottles[i]);
+            SpawnRow(colsBottom, startY - rowOffsetY, commonSpacing, level, ref index);
         }
     }
 
-    void SpawnTwoRows(LevelData level, int bottleCount)
+    void SpawnRow(int count, float y, float spacing, LevelData level, ref int index)
     {
-        int topRowCount = (bottleCount + 1) / 2; // Если нечётное, сверху на 1 больше
-        int bottomRowCount = bottleCount / 2;
+        float totalRowWidth = spacing * (count - 1);
+        float startX = -totalRowWidth / 2f;
 
-        float topY = rowSpacing / 2f;
-        float topWidth = (topRowCount - 1) * bottleSpacing;
-        float topStartX = -topWidth / 2f;
-
-        for (int i = 0; i < topRowCount; i++)
+        for (int i = 0; i < count; i++)
         {
-            Vector3 position = new Vector3(topStartX + i * bottleSpacing, topY, 0);
-            CreateBottle(i, position, level.bottles[i]);
-        }
-
-        float bottomY = -rowSpacing / 2f;
-        float bottomWidth = (bottomRowCount - 1) * bottleSpacing;
-        float bottomStartX = -bottomWidth / 2f;
-
-        for (int i = 0; i < bottomRowCount; i++)
-        {
-            int bottleIndex = topRowCount + i;
-            Vector3 position = new Vector3(bottomStartX + i * bottleSpacing, bottomY, 0);
-            CreateBottle(bottleIndex, position, level.bottles[bottleIndex]);
+            Vector3 pos = new Vector3(startX + i * spacing, y, 0);
+            CreateBottle(index, pos, level.bottles[index]);
+            index++;
         }
     }
 
     void CreateBottle(int index, Vector3 position, LevelData.BottleConfiguration config)
     {
-        BottleController bottle = Instantiate(bottlePrefab, position, Quaternion.identity);
-
-        if (bottlesParent != null)
-        {
-            bottle.transform.SetParent(bottlesParent);
-        }
-
+        BottleController bottle = Instantiate(bottlePrefab, position, Quaternion.identity, bottlesParent);
         bottle.name = $"Bottle_{index}";
+
         ApplyConfiguration(bottle, config);
         spawnedBottles[index] = bottle;
     }
@@ -151,22 +142,18 @@ public class LevelManager : MonoBehaviour
 
     public void ClearBottles()
     {
-        if (spawnedBottles != null)
-        {
-            foreach (var bottle in spawnedBottles)
-            {
-                if (bottle != null)
-                {
-                    Destroy(bottle.gameObject);
-                }
-            }
-            spawnedBottles = null;
+        if (spawnedBottles == null) return;
 
-            if (gameController != null)
-            {
-                gameController.allBottles = null;
-            }
+        foreach (var bottle in spawnedBottles)
+        {
+            if (bottle != null)
+                Destroy(bottle.gameObject);
         }
+
+        spawnedBottles = null;
+
+        if (gameController != null)
+            gameController.allBottles = null;
     }
 
     public void NextLevel()
@@ -187,4 +174,21 @@ public class LevelManager : MonoBehaviour
         LoadLevel(currentLevelIndex);
     }
 
+    void AdjustCamera(LevelData level)
+    {
+        int bottleCount = level.bottles.Length;
+
+        float screenHeight = mainCamera.orthographicSize * 2f;
+        float screenWidth = screenHeight * mainCamera.aspect;
+
+        int rows = bottleCount <= 6 ? 1 : 2;
+
+        float usableWidth = screenWidth * (1f - horizontalPadding);
+        float usableHeight = screenHeight * (1f - verticalPadding);
+
+        float bottleSpacingX = usableWidth / Mathf.Max(1, bottleCount / rows);
+        float bottleSpacingY = usableHeight / rows;
+
+        Debug.Log($"Camera adjusted: width={screenWidth}, height={screenHeight}");
+    }
 }

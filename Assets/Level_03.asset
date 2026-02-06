@@ -12,28 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf3a157f7ef05a84d9affd9678e5e174, type: 3}
   m_Name: Level_03
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 3
-  levelName: Level 3
+  levelNumber: 1
+  levelName: Level 1
   bottles:
   - colors:
-    - {r: 0.254902, g: 0.4117647, b: 0.882353, a: 1}
-    - {r: 1, g: 0.6470588, b: 0, a: 1}
-    - {r: 0.4862745, g: 0.9882354, b: 0, a: 1}
-    - {r: 0.254902, g: 0.4117647, b: 0.882353, a: 1}
-    numberOfColors: 4
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    numberOfColors: 3
   - colors:
-    - {r: 1, g: 0.6470588, b: 0, a: 1}
-    - {r: 0.4862745, g: 0.9882354, b: 0, a: 1}
-    - {r: 0.254902, g: 0.4117647, b: 0.882353, a: 1}
-    - {r: 1, g: 0.6470588, b: 0, a: 1}
-    numberOfColors: 4
-  - colors:
-    - {r: 0.4862745, g: 0.9882354, b: 0, a: 1}
-    - {r: 0.254902, g: 0.4117647, b: 0.882353, a: 1}
-    - {r: 1, g: 0.6470588, b: 0, a: 1}
-    - {r: 0.4862745, g: 0.9882354, b: 0, a: 1}
-    numberOfColors: 4
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    numberOfColors: 1
   - colors: []
     numberOfColors: 0
   - colors: []
+    numberOfColors: 0
+  - colors: []
+    numberOfColors: 0
+  - colors:
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+    numberOfColors: 0
+  - colors:
+    - {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
     numberOfColors: 0
