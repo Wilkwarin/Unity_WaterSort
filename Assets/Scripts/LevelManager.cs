@@ -5,6 +5,9 @@ public class LevelManager : MonoBehaviour
     [Header("Level Settings")]
     public LevelData[] levels;
     public int currentLevelIndex = 0;
+    public bool useGenerator = false;
+    public LevelGenerator levelGenerator;
+    private LevelData currentGeneratedLevel;
 
     [Header("Spacing Settings")]
     public float maxBottleDistance = 0.7f;
@@ -32,27 +35,54 @@ public class LevelManager : MonoBehaviour
     }
 
     public void LoadLevel(int levelIndex)
-    {
-        if (levelIndex < 0 || levelIndex >= levels.Length)
-        {
-            Debug.LogError($"Уровень {levelIndex} не существует!");
-            return;
-        }
+{
+    ClearBottles();
+    currentLevelIndex = levelIndex;
 
+    if (useGenerator && levelIndex >= levels.Length)
+    {
+        LoadGeneratedLevel();
+        return;
+    }
+
+    if (levelIndex < 0 || levelIndex >= levels.Length)
+    {
+        Debug.LogError($"Уровень {levelIndex} не существует!");
+        return;
+    }
+
+    LevelData level = levels[levelIndex];
+
+    AdjustCamera(level);
+    SpawnBottles(level);
+
+    if (gameController != null)
+    {
+        gameController.allBottles = spawnedBottles;
+    }
+
+    Debug.Log($"Загружен ручной уровень {levelIndex + 1}");
+}
+
+    void LoadGeneratedLevel()
+    {
         ClearBottles();
 
-        currentLevelIndex = levelIndex;
-        LevelData level = levels[levelIndex];
+        if (currentGeneratedLevel == null)
+        {
+            currentGeneratedLevel = levelGenerator.GenerateLevel();
+        }
 
-        AdjustCamera(level);
-        SpawnBottles(level);
+        AdjustCamera(currentGeneratedLevel);
+        SpawnBottles(currentGeneratedLevel);
 
         if (gameController != null)
         {
             gameController.allBottles = spawnedBottles;
+            gameController.CheckWinCondition();
         }
 
-        Debug.Log($"Загружен уровень {levelIndex + 1}");
+        Debug.Log($"Загружен сгенерированный уровень {currentLevelIndex + 1}");
     }
 
     void SpawnBottles(LevelData level)
@@ -158,14 +188,24 @@ public class LevelManager : MonoBehaviour
 
     public void NextLevel()
     {
-        int nextIndex = currentLevelIndex + 1;
-        if (nextIndex < levels.Length)
+        currentLevelIndex++;
+
+        currentGeneratedLevel = null;
+
+        if (useGenerator)
         {
-            LoadLevel(nextIndex);
+            LoadGeneratedLevel();
         }
         else
         {
-            Debug.Log("Это был последний уровень!");
+            if (currentLevelIndex < levels.Length)
+            {
+                LoadLevel(currentLevelIndex);
+            }
+            else
+            {
+                Debug.Log("Это был последний уровень!");
+            }
         }
     }
 
