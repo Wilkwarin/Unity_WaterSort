@@ -35,34 +35,34 @@ public class LevelManager : MonoBehaviour
     }
 
     public void LoadLevel(int levelIndex)
-{
-    ClearBottles();
-    currentLevelIndex = levelIndex;
-
-    if (useGenerator && levelIndex >= levels.Length)
     {
-        LoadGeneratedLevel();
-        return;
+        ClearBottles();
+        currentLevelIndex = levelIndex;
+
+        if (useGenerator && levelIndex >= levels.Length)
+        {
+            LoadGeneratedLevel();
+            return;
+        }
+
+        if (levelIndex < 0 || levelIndex >= levels.Length)
+        {
+            Debug.LogError($"Уровень {levelIndex} не существует!");
+            return;
+        }
+
+        LevelData level = levels[levelIndex];
+
+        AdjustCamera(level);
+        SpawnBottles(level);
+
+        if (gameController != null)
+        {
+            gameController.allBottles = spawnedBottles;
+        }
+
+        Debug.Log($"Загружен ручной уровень {levelIndex + 1}");
     }
-
-    if (levelIndex < 0 || levelIndex >= levels.Length)
-    {
-        Debug.LogError($"Уровень {levelIndex} не существует!");
-        return;
-    }
-
-    LevelData level = levels[levelIndex];
-
-    AdjustCamera(level);
-    SpawnBottles(level);
-
-    if (gameController != null)
-    {
-        gameController.allBottles = spawnedBottles;
-    }
-
-    Debug.Log($"Загружен ручной уровень {levelIndex + 1}");
-}
 
     void LoadGeneratedLevel()
     {
@@ -189,23 +189,15 @@ public class LevelManager : MonoBehaviour
     public void NextLevel()
     {
         currentLevelIndex++;
-
         currentGeneratedLevel = null;
 
-        if (useGenerator)
+        if (currentLevelIndex >= 0 && currentLevelIndex < levels.Length)
         {
-            LoadGeneratedLevel();
+            LoadLevel(currentLevelIndex);
         }
         else
         {
-            if (currentLevelIndex < levels.Length)
-            {
-                LoadLevel(currentLevelIndex);
-            }
-            else
-            {
-                Debug.Log("Это был последний уровень!");
-            }
+            LoadGeneratedLevel();
         }
     }
 

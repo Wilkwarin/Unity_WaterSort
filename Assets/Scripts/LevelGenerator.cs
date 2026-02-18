@@ -21,7 +21,7 @@ public class LevelGenerator : MonoBehaviour
     [Header("Color Palette")]
     public Color[] availableColors = new Color[]
     {
-        new Color(1f, 0f, 0.439f),      // FF0070
+        new Color(1f, 0f, 0.439f),      // FF0070 - красный
         new Color(1f, 0.647f, 0f),      // FFA500
         new Color(1f, 0.922f, 0.016f),  // FFEB04
         new Color(0.486f, 0.988f, 0f),  // 7CFC00
@@ -42,10 +42,9 @@ public class LevelGenerator : MonoBehaviour
         {
             int levelNumber = levelManager.currentLevelIndex;
             int cycleIndex = levelNumber % 5;
-            numberOfColors = 6 + cycleIndex;
+            numberOfColors = 4 + cycleIndex;
             emptyBottles = 2;
         }
-
 
         List<BottleData> bottles = null;
         int attempts = 0;
@@ -74,48 +73,69 @@ public class LevelGenerator : MonoBehaviour
     }
 
     bool IsSolvable(List<BottleData> bottles)
+{
+    // Проверка 1: Каждый цвет встречается ровно 4 раза
+    Dictionary<Color, int> colorCounts = new Dictionary<Color, int>();
+    
+    foreach (var bottle in bottles)
     {
-        GameState initialState = new GameState(bottles);
-
-        if (initialState.IsSolved())
-            return false;
-
-        Queue<GameState> queue = new Queue<GameState>();
-        HashSet<string> visited = new HashSet<string>();
-
-        queue.Enqueue(initialState);
-        visited.Add(initialState.GetHash());
-
-        int statesChecked = 0;
-
-        while (queue.Count > 0 && statesChecked < maxSolverStates)
+        foreach (Color c in bottle.colors)
         {
-            statesChecked++;
-            GameState current = queue.Dequeue();
-
-            if (current.depth > maxSolverDepth)
-                continue;
-
-            List<GameState> nextStates = current.GetPossibleMoves();
-
-            foreach (GameState next in nextStates)
+            if (!colorCounts.ContainsKey(c))
+                colorCounts[c] = 0;
+            colorCounts[c]++;
+        }
+    }
+    
+    foreach (var count in colorCounts.Values)
+    {
+        if (count != 4)
+            return false;
+    }
+    
+    // Проверка 2: Есть хотя бы 1 пустая бутылка
+    int emptyCount = bottles.Count(b => b.colors.Count == 0);
+    if (emptyCount < 1)
+        return false;
+    
+    // Проверка 3: Нет дубликатов подряд
+    foreach (var bottle in bottles)
+    {
+        for (int i = 0; i < bottle.colors.Count - 1; i++)
+        {
+            if (bottle.colors[i] == bottle.colors[i + 1])
+                return false;
+        }
+    }
+    
+    // Проверка 4: Уровень не решён
+    bool allComplete = true;
+    foreach (var bottle in bottles)
+    {
+        if (bottle.colors.Count == 0) continue;
+        if (bottle.colors.Count != 4)
+        {
+            allComplete = false;
+            break;
+        }
+        
+        Color first = bottle.colors[0];
+        for (int i = 1; i < 4; i++)
+        {
+            if (bottle.colors[i] != first)
             {
-                string hash = next.GetHash();
-
-                if (visited.Contains(hash))
-                    continue;
-
-                visited.Add(hash);
-
-                if (next.IsSolved())
-                    return true;
-
-                queue.Enqueue(next);
+                allComplete = false;
+                break;
             }
         }
-
-        return false;
+        if (!allComplete) break;
     }
+    
+    if (allComplete)
+        return false; // Уже решён = плохо
+    
+    return true; // Прошли все проверки
+}
 
     List<BottleData> CreateTrivialLevel()
     {
