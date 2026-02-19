@@ -13,12 +13,16 @@ public class GameController : MonoBehaviour
 
     [Header("UI References")]
     public GameObject winPanel;
+    public GameObject restartButton;
     public MenuManager menuManager;
 
     private bool levelCompleted = false;
     public bool isBusy = false;
 
-    void Start() { }
+    void Start()
+    {
+
+    }
 
     void Update()
     {
@@ -118,6 +122,11 @@ public class GameController : MonoBehaviour
             ProgressManager.Instance.SaveCurrentLevel(levelManager.currentLevelIndex + 1);
         }
 
+        if (restartButton != null)
+        {
+            restartButton.SetActive(false);
+        }
+
         winPanel?.SetActive(true);
     }
 
@@ -132,6 +141,11 @@ public class GameController : MonoBehaviour
         isBusy = false;
         FirstBottle = null;
         SecondBottle = null;
+
+        if (restartButton != null)
+        {
+            restartButton.SetActive(true);
+        }
 
         LevelManager levelManager = FindFirstObjectByType<LevelManager>();
         if (levelManager != null)
@@ -154,6 +168,11 @@ public class GameController : MonoBehaviour
         levelCompleted = false;
         isBusy = false;
 
+        if (restartButton != null)
+        {
+            restartButton.SetActive(true);
+        }
+
         LevelManager levelManager = FindFirstObjectByType<LevelManager>();
         if (levelManager != null)
         {
@@ -172,6 +191,11 @@ public class GameController : MonoBehaviour
         isBusy = false;
         FirstBottle = null;
         SecondBottle = null;
+
+        if (restartButton != null)
+        {
+            restartButton.SetActive(false);
+        }
 
         LevelManager lm = FindFirstObjectByType<LevelManager>();
         if (lm != null)

@@ -12,6 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf3a157f7ef05a84d9affd9678e5e174, type: 3}
   m_Name: Level_04
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 0
-  levelName: Level 1
-  bottles: []
+  levelNumber: 4
+  levelName: Level 4
+  bottles:
+  - colors:
+    - {r: 0, g: 1, b: 1, a: 1}
+    - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    - {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - {r: 0, g: 1, b: 1, a: 1}
+    numberOfColors: 4
+  - colors:
+    - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    - {r: 0, g: 1, b: 1, a: 1}
+    - {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    numberOfColors: 4
+  - colors:
+    - {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    - {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - {r: 0, g: 1, b: 1, a: 1}
+    numberOfColors: 4
+  - colors: []
+    numberOfColors: 0
+  - colors: []
+    numberOfColors: 0

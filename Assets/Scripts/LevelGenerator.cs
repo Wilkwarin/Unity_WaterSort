@@ -74,7 +74,7 @@ public class LevelGenerator : MonoBehaviour
 
     bool IsSolvable(List<BottleData> bottles)
 {
-    // Проверка 1: Каждый цвет встречается ровно 4 раза
+
     Dictionary<Color, int> colorCounts = new Dictionary<Color, int>();
     
     foreach (var bottle in bottles)
@@ -92,13 +92,11 @@ public class LevelGenerator : MonoBehaviour
         if (count != 4)
             return false;
     }
-    
-    // Проверка 2: Есть хотя бы 1 пустая бутылка
+
     int emptyCount = bottles.Count(b => b.colors.Count == 0);
     if (emptyCount < 1)
         return false;
-    
-    // Проверка 3: Нет дубликатов подряд
+
     foreach (var bottle in bottles)
     {
         for (int i = 0; i < bottle.colors.Count - 1; i++)
@@ -108,7 +106,6 @@ public class LevelGenerator : MonoBehaviour
         }
     }
     
-    // Проверка 4: Уровень не решён
     bool allComplete = true;
     foreach (var bottle in bottles)
     {
@@ -132,9 +129,9 @@ public class LevelGenerator : MonoBehaviour
     }
     
     if (allComplete)
-        return false; // Уже решён = плохо
+        return false;
     
-    return true; // Прошли все проверки
+    return true;
 }
 
     List<BottleData> CreateTrivialLevel()
