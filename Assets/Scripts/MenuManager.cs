@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("References")]
     public LevelManager levelManager;
+    public GameController gameController;
 
     void Start()
     {
@@ -31,6 +32,16 @@ public class MenuManager : MonoBehaviour
         {
             menuPanel.SetActive(false);
         }
+
+        GameController gameController = Object.FindFirstObjectByType<GameController>();
+
+        if (gameController != null)
+        {
+            if (gameController.restartButton != null)
+            {
+                gameController.restartButton.SetActive(true);
+            }
+        }
     }
 
     void UpdateContinueButton()
@@ -52,6 +63,12 @@ public class MenuManager : MonoBehaviour
         if (levelManager != null)
         {
             levelManager.LoadLevel(currentLevel);
+        }
+
+        GameController gc = FindFirstObjectByType<GameController>();
+        if (gc != null)
+        {
+            gc.OnLevelStarted();
         }
     }
 

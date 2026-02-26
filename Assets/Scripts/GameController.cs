@@ -13,7 +13,10 @@ public class GameController : MonoBehaviour
 
     [Header("UI References")]
     public GameObject winPanel;
+    public GameObject menuButton;
     public GameObject restartButton;
+    public GameObject nextLevelButtonCanvas;
+    public GameObject nextLevelButtonWinPanel;
     public MenuManager menuManager;
 
     private bool levelCompleted = false;
@@ -21,7 +24,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-
+        HideAllButtons();
     }
 
     void Update()
@@ -88,6 +91,21 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void OnLevelStarted()
+    {
+        if (menuButton != null)
+            menuButton.SetActive(true);
+
+        if (restartButton != null)
+            restartButton.SetActive(true);
+
+        if (nextLevelButtonCanvas != null)
+            nextLevelButtonCanvas.SetActive(true);
+
+        if (nextLevelButtonWinPanel != null)
+            nextLevelButtonWinPanel.SetActive(false);
+    }
+
     public void CheckWinCondition()
     {
         if (levelCompleted)
@@ -122,10 +140,14 @@ public class GameController : MonoBehaviour
             ProgressManager.Instance.SaveCurrentLevel(levelManager.currentLevelIndex + 1);
         }
 
+        if (nextLevelButtonCanvas != null)
+            nextLevelButtonCanvas.SetActive(false);
+
+        if (nextLevelButtonWinPanel != null)
+            nextLevelButtonWinPanel.SetActive(true);
+
         if (restartButton != null)
-        {
             restartButton.SetActive(false);
-        }
 
         winPanel?.SetActive(true);
     }
@@ -142,10 +164,7 @@ public class GameController : MonoBehaviour
         FirstBottle = null;
         SecondBottle = null;
 
-        if (restartButton != null)
-        {
-            restartButton.SetActive(true);
-        }
+        OnLevelStarted();
 
         LevelManager levelManager = FindFirstObjectByType<LevelManager>();
         if (levelManager != null)
@@ -168,10 +187,7 @@ public class GameController : MonoBehaviour
         levelCompleted = false;
         isBusy = false;
 
-        if (restartButton != null)
-        {
-            restartButton.SetActive(true);
-        }
+        OnLevelStarted();
 
         LevelManager levelManager = FindFirstObjectByType<LevelManager>();
         if (levelManager != null)
@@ -192,10 +208,7 @@ public class GameController : MonoBehaviour
         FirstBottle = null;
         SecondBottle = null;
 
-        if (restartButton != null)
-        {
-            restartButton.SetActive(false);
-        }
+        HideAllButtons();
 
         LevelManager lm = FindFirstObjectByType<LevelManager>();
         if (lm != null)
@@ -206,5 +219,18 @@ public class GameController : MonoBehaviour
         menuManager.ShowMenu();
     }
 
+    void HideAllButtons()
+    {
+        if (menuButton != null)
+            menuButton.SetActive(false);
 
+        if (restartButton != null)
+            restartButton.SetActive(false);
+
+        if (nextLevelButtonCanvas != null)
+            nextLevelButtonCanvas.SetActive(false);
+
+        if (nextLevelButtonWinPanel != null)
+            nextLevelButtonWinPanel.SetActive(false);
+    }
 }
