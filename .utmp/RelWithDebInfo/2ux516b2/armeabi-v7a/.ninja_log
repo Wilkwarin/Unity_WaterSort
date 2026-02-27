@@ -1,0 +1,23 @@
+# ninja log v5
+12	2057	7938994481865497	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	d1abd3f95504fad9
+171	412	7938994465456838	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	5088ea5a3c7cf0d3
+413	732	7938994468544671	C:/Users/mskfo/WaterSortW/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2ux516b2/obj/armeabi-v7a/libswappywrapper.so	9edb3be9f80ccdb6
+89	1951	7938994480842026	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	80d1aab7315bb03b
+118	1596	7938994477209590	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	f3d157910fd07f29
+44	1724	7938994478554714	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	f836594de147ec55
+157	1832	7938994479669293	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	9287a63301071e2
+29	1650	7938994477797961	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	928152f48eb84873
+62	1735	7938994478620465	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	178132e200817f9
+140	1695	7938994478254470	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	43490da22d42c532
+2057	2175	7938994483118154	C:/Users/mskfo/WaterSortW/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2ux516b2/obj/armeabi-v7a/libgame.so	185cd51a5d578ce7
+144	562	7939022786615884	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	5088ea5a3c7cf0d3
+563	951	7939022790373618	C:/Users/mskfo/WaterSortW/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2ux516b2/obj/armeabi-v7a/libswappywrapper.so	9edb3be9f80ccdb6
+48	2142	7939022802339166	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	928152f48eb84873
+99	2193	7939022802947042	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	43490da22d42c532
+80	2206	7939022803061051	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	f3d157910fd07f29
+62	2225	7939022803282015	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	f836594de147ec55
+32	2338	7939022804422724	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	178132e200817f9
+130	2387	7939022804855937	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	9287a63301071e2
+115	2564	7939022806637099	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	80d1aab7315bb03b
+13	2627	7939022807132898	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	d1abd3f95504fad9
+2627	2799	7939022809081822	C:/Users/mskfo/WaterSortW/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/2ux516b2/obj/armeabi-v7a/libgame.so	185cd51a5d578ce7
