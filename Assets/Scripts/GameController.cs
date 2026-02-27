@@ -13,10 +13,11 @@ public class GameController : MonoBehaviour
 
     [Header("UI References")]
     public GameObject winPanel;
+    public GameObject winText;
+    public GameObject nextLevelButtonWinPanel;
     public GameObject menuButton;
     public GameObject restartButton;
     public GameObject nextLevelButtonCanvas;
-    public GameObject nextLevelButtonWinPanel;
     public MenuManager menuManager;
 
     private bool levelCompleted = false;
@@ -34,56 +35,71 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        Vector2 inputPosition = Vector2.zero;
+        bool inputDetected = false;
+
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+            inputPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+            inputDetected = true;
+        }
 
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+        else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            inputPosition = Mouse.current.position.ReadValue();
+            inputDetected = true;
+        }
 
-            if (hit.collider != null)
+        if (!inputDetected)
+            return;
+
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(inputPosition.x, inputPosition.y, 0));
+        Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+
+        RaycastHit2D hit = Physics2D.Raycast(worldPos2D, Vector2.zero);
+
+        if (hit.collider != null)
+        {
+            if (hit.collider.GetComponent<BottleController>() != null)
             {
-                if (hit.collider.GetComponent<BottleController>() != null)
+                if (FirstBottle == null)
                 {
-                    if (FirstBottle == null)
+                    BottleController selectedBottle = hit.collider.GetComponent<BottleController>();
+
+                    if (selectedBottle.currentState != BottleState.InProgress)
                     {
-                        BottleController selectedBottle = hit.collider.GetComponent<BottleController>();
+                        return;
+                    }
 
-                        if (selectedBottle.currentState != BottleState.InProgress)
-                        {
-                            return;
-                        }
-
-                        FirstBottle = selectedBottle;
-                        FirstBottle.Select();
+                    FirstBottle = selectedBottle;
+                    FirstBottle.Select();
+                }
+                else
+                {
+                    if (FirstBottle == hit.collider.GetComponent<BottleController>())
+                    {
+                        FirstBottle.Deselect();
+                        FirstBottle = null;
                     }
                     else
                     {
-                        if (FirstBottle == hit.collider.GetComponent<BottleController>())
+                        SecondBottle = hit.collider.GetComponent<BottleController>();
+                        FirstBottle.bottleControllerRef = SecondBottle;
+
+                        FirstBottle.UpdateTopColorValues();
+                        SecondBottle.UpdateTopColorValues();
+
+                        if (SecondBottle.FillBottleCheck(FirstBottle.topColor) == true)
                         {
-                            FirstBottle.Deselect();
+                            FirstBottle.StartColorTransfer();
                             FirstBottle = null;
+                            SecondBottle = null;
                         }
                         else
                         {
-                            SecondBottle = hit.collider.GetComponent<BottleController>();
-                            FirstBottle.bottleControllerRef = SecondBottle;
-
-                            FirstBottle.UpdateTopColorValues();
-                            SecondBottle.UpdateTopColorValues();
-
-                            if (SecondBottle.FillBottleCheck(FirstBottle.topColor) == true)
-                            {
-                                FirstBottle.StartColorTransfer();
-                                FirstBottle = null;
-                                SecondBottle = null;
-                            }
-                            else
-                            {
-                                FirstBottle.Deselect();
-                                FirstBottle = null;
-                                SecondBottle = null;
-                            }
+                            FirstBottle.Deselect();
+                            FirstBottle = null;
+                            SecondBottle = null;
                         }
                     }
                 }
@@ -104,6 +120,9 @@ public class GameController : MonoBehaviour
 
         if (nextLevelButtonWinPanel != null)
             nextLevelButtonWinPanel.SetActive(false);
+
+        if (winText != null)
+            winText.SetActive(false);
     }
 
     public void CheckWinCondition()
@@ -149,7 +168,11 @@ public class GameController : MonoBehaviour
         if (restartButton != null)
             restartButton.SetActive(false);
 
-        winPanel?.SetActive(true);
+        if (winPanel != null)
+            winPanel.SetActive(true);
+
+        if (winText != null)
+            winText.SetActive(true);
     }
 
     public void RestartLevel()
@@ -232,5 +255,11 @@ public class GameController : MonoBehaviour
 
         if (nextLevelButtonWinPanel != null)
             nextLevelButtonWinPanel.SetActive(false);
+
+        if (winText != null)
+            winText.SetActive(false);
+
+        if (winPanel != null)
+            winPanel.SetActive(false);
     }
 }

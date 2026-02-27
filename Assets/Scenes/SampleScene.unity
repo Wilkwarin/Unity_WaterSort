@@ -269,12 +269,12 @@ GameObject:
   - component: {fileID: 58796012}
   - component: {fileID: 58796011}
   m_Layer: 5
-  m_Name: NextLevelButton
+  m_Name: NextLevelButtonWinPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &58796010
 RectTransform:
   m_ObjectHideFlags: 0
@@ -282,17 +282,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58796009}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 575665948}
-  m_Father: {fileID: 965496664}
+  m_Father: {fileID: 139824319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 365, y: 732}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -175, y: -175}
   m_SizeDelta: {x: 175, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &58796011
@@ -532,6 +532,8 @@ RectTransform:
   - {fileID: 2008733411}
   - {fileID: 1124505570}
   - {fileID: 1569824223}
+  - {fileID: 169990126}
+  - {fileID: 58796010}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -557,7 +559,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &169990126
 RectTransform:
   m_ObjectHideFlags: 0
@@ -565,16 +567,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 169990125}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 674615995}
+  m_Father: {fileID: 139824319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 785}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 175}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &169990127
@@ -1586,7 +1588,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 169990126}
   - {fileID: 965496664}
   m_Father: {fileID: 139824319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1608,7 +1609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.78039217}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.42745098}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1763,13 +1764,13 @@ MonoBehaviour:
   maxSolverStates: 10000
   availableColors:
   - {r: 1, g: 0, b: 0.43908834, a: 1}
-  - {r: 1, g: 0.6470588, b: 0, a: 1}
+  - {r: 1, g: 0.43541253, b: 0, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  - {r: 0.4862745, g: 0.9882354, b: 0, a: 1}
-  - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 0.4597135, g: 0.82641506, b: 0.10447132, a: 1}
+  - {r: 0, g: 0.8058505, b: 1, a: 1}
   - {r: 0.5, g: 0, b: 1, a: 1}
-  - {r: 0.9803922, g: 0.5019608, b: 0.4470589, a: 1}
-  - {r: 0.65882355, g: 0.16207187, b: 0.6666667, a: 1}
+  - {r: 0.8415094, g: 0.4270357, b: 0.37947312, a: 1}
+  - {r: 0.5535796, g: 0.16078429, b: 0.6666667, a: 1}
   - {r: 0.5, g: 0.25, b: 0, a: 1}
   - {r: 0.5, g: 0.5, b: 0.5, a: 1}
   levelManager: {fileID: 1800375405}
@@ -1815,8 +1816,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 58796010}
+  m_Children: []
   m_Father: {fileID: 674615995}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1842,7 +1842,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1124505570
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1995,7 +1995,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   winPanel: {fileID: 674615994}
+  winText: {fileID: 169990125}
+  nextLevelButtonWinPanel: {fileID: 58796009}
+  menuButton: {fileID: 1124505569}
   restartButton: {fileID: 1367405477}
+  nextLevelButtonCanvas: {fileID: 1569824222}
   menuManager: {fileID: 191999714}
   isBusy: 0
 --- !u!4 &1290873589
@@ -2159,12 +2163,12 @@ GameObject:
   - component: {fileID: 1569824225}
   - component: {fileID: 1569824224}
   m_Layer: 5
-  m_Name: NextLevelButton
+  m_Name: NextLevelButtonCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1569824223
 RectTransform:
   m_ObjectHideFlags: 0
